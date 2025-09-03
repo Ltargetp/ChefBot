@@ -1,0 +1,15 @@
+{
+  "keto_desserts": [
+    {
+      "name": { "ru": "Шоколадные кето-маффины", "en": "Keto Chocolate Muffins", "de": "Keto-Schokoladen-Muffins", "fr": "Muffins keto au chocolat" },
+      "calories": 180,
+      "ingredients": {
+        "ru": "миндальная мука, какао, яйца, кокосовое масло, эритрит",
+        "en": "almond flour, cocoa, eggs, coconut oil, erythritol",
+        "de": "Mandelmehl, Kakao, Eier, Kokosöl, Erythrit",
+        "fr": "farine d'amande, cacao, œufs, huile de coco, érythritol"
+      },
+      "image": "keto-muffins.jpg"
+    }
+  ]
+}
