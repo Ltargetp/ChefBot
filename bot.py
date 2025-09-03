@@ -4,10 +4,10 @@ import random
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
 # ==================== НАСТРОЙКИ ====================
-BOT_TOKEN = "ВАШ_ТОКЕН_ОТ_BOTFATHER"  # ← ЗАМЕНИТЕ ЭТО!
+BOT_TOKEN = "7052018238:AAEhxM9rw-V7O7DFBExRQ24egAneOPBZO5U" 
 # ==================================================
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = telebot.TeleBot(7052018238:AAEhxM9rw-V7O7DFBExRQ24egAneOPBZO5U)
 
 # ==================== БАЗА РЕЦЕПТОВ ====================
 RECIPES = {
@@ -119,7 +119,7 @@ def handle_message(message):
 def send_recipes(message, category):
     if category in RECIPES:
         recipes = RECIPES[category]
-        for recipe in recipes[:3]:  # Показываем первые 3 рецепта
+        for recipe in recipes[:3]:
             response = (
                 f"*{recipe['name']}* ({recipe['calories']} ккал)\n\n"
                 f"🍴 *Ингредиенты:*\n{recipe['ingredients']}\n\n"
