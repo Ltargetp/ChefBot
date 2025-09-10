@@ -70,6 +70,11 @@
             transform: translateY(-2px);
         }
 
+        .language-btn.active {
+            background: #667eea !important;
+            color: white !important;
+        }
+
         .search-section {
             background: #f7fafc;
             padding: 20px;
@@ -279,6 +284,15 @@
             color: #718096;
         }
 
+        .no-recipes {
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            margin: 40px 0;
+            padding: 20px;
+            grid-column: 1 / -1;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -306,22 +320,22 @@
         </header>
 
         <div class="language-buttons">
-            <button class="language-btn" onclick="changeLanguage('ru')">🇷🇺 Русский</button>
-            <button class="language-btn" onclick="changeLanguage('en')">🇺🇸 English</button>
-            <button class="language-btn" onclick="changeLanguage('de')">🇩🇪 Deutsch</button>
-            <button class="language-btn" onclick="changeLanguage('fr')">🇫🇷 Français</button>
+            <button class="language-btn" data-lang="ru">🇷🇺 Русский</button>
+            <button class="language-btn" data-lang="en">🇺🇸 English</button>
+            <button class="language-btn" data-lang="de">🇩🇪 Deutsch</button>
+            <button class="language-btn" data-lang="fr">🇫🇷 Français</button>
         </div>
 
         <div class="search-section">
-            <input type="text" class="search-input" placeholder="🔍 Поиск рецептов..." data-placeholder="search_placeholder" oninput="filterRecipes()">
+            <input type="text" class="search-input" placeholder="🔍 Поиск рецептов..." data-translate="search_placeholder" id="search-input">
             
             <div class="filters">
-                <button class="filter-btn active" onclick="setFilter('all')" data-translate="filter_all">Все</button>
-                <button class="filter-btn" onclick="setFilter('keto')" data-translate="filter_keto">Кето</button>
-                <button class="filter-btn" onclick="setFilter('breakfast')" data-translate="filter_breakfast">Завтраки</button>
-                <button class="filter-btn" onclick="setFilter('salad')" data-translate="filter_salad">Салаты</button>
-                <button class="filter-btn" onclick="setFilter('main')" data-translate="filter_main">Основные</button>
-                <button class="filter-btn" onclick="setFilter('dessert')" data-translate="filter_dessert">Десерты</button>
+                <button class="filter-btn active" data-filter="all" data-translate="filter_all">Все</button>
+                <button class="filter-btn" data-filter="keto" data-translate="filter_keto">Кето</button>
+                <button class="filter-btn" data-filter="breakfast" data-translate="filter_breakfast">Завтраки</button>
+                <button class="filter-btn" data-filter="salad" data-translate="filter_salad">Салаты</button>
+                <button class="filter-btn" data-filter="main" data-translate="filter_main">Основные</button>
+                <button class="filter-btn" data-filter="dessert" data-translate="filter_dessert">Десерты</button>
             </div>
         </div>
 
@@ -348,7 +362,7 @@
             </div>
         </div>
 
-        <div class="recipes-grid" id="recipesContainer">
+        <div class="recipes-grid" id="recipes-container">
             <!-- Рецепты будут загружены через JavaScript -->
         </div>
 
@@ -401,7 +415,8 @@
                 category_salad: "Салат",
                 category_main: "Основное",
                 category_dessert: "Десерт",
-                category_drink: "Напиток"
+                category_drink: "Напиток",
+                no_recipes: "Рецепты не найдены"
             },
             en: {
                 subtitle: "Your assistant in the world of healthy nutrition",
@@ -436,7 +451,8 @@
                 category_salad: "Salad",
                 category_main: "Main",
                 category_dessert: "Dessert",
-                category_drink: "Drink"
+                category_drink: "Drink",
+                no_recipes: "No recipes found"
             },
             de: {
                 subtitle: "Ihr Assistent in der Welt der gesunden Ernährung",
@@ -471,7 +487,8 @@
                 category_salad: "Salat",
                 category_main: "Hauptgericht",
                 category_dessert: "Dessert",
-                category_drink: "Getränk"
+                category_drink: "Getränk",
+                no_recipes: "Keine Rezepte gefunden"
             },
             fr: {
                 subtitle: "Votre assistant dans le monde de la nutrition saine",
@@ -506,7 +523,8 @@
                 category_salad: "Salade",
                 category_main: "Principal",
                 category_dessert: "Dessert",
-                category_drink: "Boisson"
+                category_drink: "Boisson",
+                no_recipes: "Aucune recette trouvée"
             }
         };
 
@@ -773,13 +791,4 @@
                     if (element.placeholder) {
                         element.placeholder = translations[currentLanguage][key];
                     } else {
-                        element.textContent = translations[currentLanguage][key];
-                    }
-                }
-            });
-        }
-
-        function updateActiveLanguageButton() {
-            document.querySelectorAll('.language-btn').forEach(btn => {
-                btn.style.background = 'rgba(102, 126, 234, 0
-                    
+                        element
