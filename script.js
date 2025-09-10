@@ -3,41 +3,69 @@ const translations = {
     ru: {
         search_placeholder: "Поиск рецептов...",
         filter_all: "Все",
-        filter_breakfast: "Завтрак",
-        filter_lunch: "Обед",
-        filter_dinner: "Ужин",
-        filter_dessert: "Десерт",
+        filter_keto: "Кето",
+        filter_breakfast: "Завтраки",
+        filter_salad: "Салаты",
+        filter_main: "Основные",
+        filter_dessert: "Десерты",
         no_recipes: "Рецепты не найдены",
         ingredients: "Ингредиенты",
-        instructions: "Инструкции"
+        instructions: "Инструкции",
+        buy_btn: "🛒 Купить продукты",
+        save_recipe_btn: "⭐ Сохранить",
+        calories_text: "ккал"
     },
     en: {
         search_placeholder: "Search recipes...",
         filter_all: "All",
-        filter_breakfast: "Breakfast",
-        filter_lunch: "Lunch",
-        filter_dinner: "Dinner",
-        filter_dessert: "Dessert",
+        filter_keto: "Keto",
+        filter_breakfast: "Breakfasts",
+        filter_salad: "Salads",
+        filter_main: "Main courses",
+        filter_dessert: "Desserts",
         no_recipes: "No recipes found",
         ingredients: "Ingredients",
-        instructions: "Instructions"
+        instructions: "Instructions",
+        buy_btn: "🛒 Buy products",
+        save_recipe_btn: "⭐ Save",
+        calories_text: "kcal"
     },
-    kz: {
-        search_placeholder: "Рецептілерді іздеу...",
-        filter_all: "Барлығы",
-        filter_breakfast: "Таңертеңгі ас",
-        filter_lunch: "Түскі ас",
-        filter_dinner: "Кешкі ас",
-        filter_dessert: "Десерт",
-        no_recipes: "Рецепттер табылмады",
-        ingredients: "Ингредиенттер",
-        instructions: "Нұсқаулар"
+    de: {
+        search_placeholder: "Rezepte suchen...",
+        filter_all: "Alle",
+        filter_keto: "Keto",
+        filter_breakfast: "Frühstücke",
+        filter_salad: "Salate",
+        filter_main: "Hauptgerichte",
+        filter_dessert: "Desserts",
+        no_recipes: "Keine Rezepte gefunden",
+        ingredients: "Zutaten",
+        instructions: "Anleitung",
+        buy_btn: "🛒 Produkte kaufen",
+        save_recipe_btn: "⭐ Speichern",
+        calories_text: "kcal"
+    },
+    fr: {
+        search_placeholder: "Rechercher des recettes...",
+        filter_all: "Tous",
+        filter_keto: "Kéto",
+        filter_breakfast: "Petits-déjeuners",
+        filter_salad: "Salades",
+        filter_main: "Plats principaux",
+        filter_dessert: "Desserts",
+        no_recipes: "Aucune recette trouvée",
+        ingredients: "Ingrédients",
+        instructions: "Instructions",
+        buy_btn: "🛒 Acheter produits",
+        save_recipe_btn: "⭐ Sauvegarder",
+        calories_text: "kcal"
     }
 };
 
 let currentLanguage = 'ru';
 let currentFilter = 'all';
 let currentSearch = '';
+let recipesData = [];
 
 function changeLanguage(lang) {
     currentLanguage = lang;
@@ -62,11 +90,9 @@ function updateTranslations() {
 function updateActiveLanguageButton() {
     document.querySelectorAll('.language-btn').forEach(btn => {
         if (btn.getAttribute('data-lang') === currentLanguage) {
-            btn.style.background = 'rgba(102, 126, 234, 0.8)';
-            btn.style.color = 'white';
+            btn.classList.add('active');
         } else {
-            btn.style.background = 'rgba(102, 126, 234, 0.1)';
-            btn.style.color = 'rgba(102, 126, 234, 0.8)';
+            btn.classList.remove('active');
         }
     });
 }
@@ -105,20 +131,26 @@ function renderRecipes() {
     
     recipesContainer.innerHTML = filteredRecipes.map(recipe => `
         <div class="recipe-card">
-            <h3>${recipe.title[currentLanguage] || recipe.title.ru}</h3>
-            <p><strong>${translations[currentLanguage].ingredients}:</strong> ${recipe.ingredients[currentLanguage] || recipe.ingredients.ru}</p>
-            <p><strong>${translations[currentLanguage].instructions}:</strong> ${recipe.instructions[currentLanguage] || recipe.instructions.ru}</p>
+            <div class="recipe-image">${recipe.icon}</div>
+            <h3 class="recipe-title">${recipe.name[currentLanguage] || recipe.name.ru}</h3>
+            <div class="recipe-meta">
+                <span class="recipe-calories">${recipe.calories} ${translations[currentLanguage].calories_text}</span>
+                <span class="recipe-category">${recipe.category}</span>
+            </div>
+            <p class="recipe-ingredients"><strong>${translations[currentLanguage].ingredients}:</strong> ${recipe.ingredients[currentLanguage] || recipe.ingredients.ru}</p>
+            <div class="recipe-actions">
+                <button class="action-btn buy-btn">${translations[currentLanguage].buy_btn}</button>
+                <button class="action-btn save-btn">${translations[currentLanguage].save_recipe_btn}</button>
+            </div>
         </div>
     `).join('');
 }
 
 function getFilteredRecipes() {
-    if (!window.recipesData) return [];
-    
-    return window.recipesData.filter(recipe => {
+    return recipesData.filter(recipe => {
         const matchesCategory = currentFilter === 'all' || recipe.category === currentFilter;
         const matchesSearch = currentSearch === '' || 
-            (recipe.title[currentLanguage] || recipe.title.ru).toLowerCase().includes(currentSearch) ||
+            (recipe.name[currentLanguage] || recipe.name.ru).toLowerCase().includes(currentSearch) ||
             (recipe.ingredients[currentLanguage] || recipe.ingredients.ru).toLowerCase().includes(currentSearch);
         
         return matchesCategory && matchesSearch;
@@ -126,18 +158,16 @@ function getFilteredRecipes() {
 }
 
 // Загрузка рецептов
-function loadRecipes() {
-    fetch('recipes.json')
-        .then(response => response.json())
-        .then(data => {
-            window.recipesData = data;
-            renderRecipes();
-        })
-        .catch(error => {
-            console.error('Error loading recipes:', error);
-            document.getElementById('recipes-container').innerHTML = 
-                `<p class="error">Ошибка загрузки рецептов</p>`;
-        });
+async function loadRecipes() {
+    try {
+        const response = await fetch('recipes.json');
+        recipesData = await response.json();
+        renderRecipes();
+    } catch (error) {
+        console.error('Error loading recipes:', error);
+        document.getElementById('recipes-container').innerHTML = 
+            `<p class="error">Ошибка загрузки рецептов</p>`;
+    }
 }
 
 // Инициализация
@@ -172,4 +202,9 @@ document.addEventListener('DOMContentLoaded', function() {
             filterRecipes(this.getAttribute('data-filter'));
         });
     });
+    
+    // Функция для сохранения предпочтений (заглушка)
+    window.savePreferences = function() {
+        alert('Настройки сохранены!');
+    };
 });
