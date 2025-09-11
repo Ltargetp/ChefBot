@@ -1,30 +1,25 @@
-# 🤖 NutriChefBot - Telegram бот с рецептами
+# FitChefBot - Your Personal Nutrition Assistant
 
-## 🚀 Быстрый старт:
+## 🚀 Quick Start
 
-1. **Создайте бота в @BotFather** и получите токен  
-2. **Замените `ВАШ_ТОКЕН_ОТ_BOTFATHER`** в файле `bot.py`  
-3. **Установите зависимости:** `pip install -r requirements.txt`  
-4. **Запустите бота:** `python bot.py`  
+1. Get bot token from [@BotFather](https://t.me/BotFather)
+2. Replace `ВАШ_ТОКЕН_ОТ_BOTFATHER` in `bot.py` with your token
+3. Install dependencies: `pip install -r requirements.txt`
+4. Run locally: `python bot.py`
+5. Deploy to Render/Heroku for 24/7 operation
 
----
+## 💰 Monetization
+- iHerb affiliate program (code: KAL0606)
+- 10% discount for users + commission for you
+- Future: Premium subscriptions, product partnerships
 
-### 📋 Функционал:
+## 🌟 Features
+- 10+ healthy recipes in 6 categories
+- Multi-language support (EN/RU/DE/FR)  
+- Nutrition analysis integration
+- Shopping lists & meal plans
+- Affiliate marketing system
 
-- ✅ Поиск рецептов по категориям  
-- ✅ Партнерские ссылки на продукты  
-- 🔄 Система избранного (в разработке)  
-- 🔄 Список покупок (в разработке)  
-
----
-
-### 🍫 Включенные рецепты:
-
-- Кето десерты (3 рецепта)  
-- Здоровые завтраки (2 рецепта)  
-
----
-
-### 📞 Поддержка:
-По вопросам работы бота: @GetAlexl  
-Партнерство: iHerb с кодом **KAL0606**
+## 📞 Support
+- Telegram: @GetAlexl
+- iHerb code: KAL0606 (10% discount)
