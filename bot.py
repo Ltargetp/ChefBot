@@ -1,146 +1,162 @@
 import telebot
 import json
-import random
-from telebot.types import ReplyKeyboardMarkup, KeyboardButton
+import os
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-# ==================== НАСТРОЙКИ ====================
-BOT_TOKEN = "7052018238:AAEhxM9rw-V7O7DFBExRQ24egAneOPBZO5U" 
-# ==================================================
+# Настройки бота
+bot = telebot.TeleBot("ВАШ_ТОКЕН_ОТ_BOTFATHER")  # ЗАМЕНИТЕ НА РЕАЛЬНЫЙ ТОКЕН!
 
-bot = telebot.TeleBot(7052018238:AAEhxM9rw-V7O7DFBExRQ24egAneOPBZO5U)
+# Загрузка рецептов
+with open('recipes.json', 'r', encoding='utf-8') as f:
+    recipes = json.load(f)
 
-# ==================== БАЗА РЕЦЕПТОВ ====================
-RECIPES = {
-    "Кето десерты": [
-        {
-            "name": "🍫 Шоколадные кето-маффины",
-            "calories": 180,
-            "ingredients": "миндальная мука, какао, яйца, кокосовое масло, эритрит",
-            "instructions": "Смешайте все ингредиенты. Выпекайте 20 минут при 180°C.",
-            "partner_link": "https://ru.iherb.com/search?kw=almond+flour&rcode=KAL0606"
-        },
-        {
-            "name": "🧀 Кето-чизкейк без выпечки", 
-            "calories": 220,
-            "ingredients": "сливочный сыр, миндальная мука, сливки, лимонный сок, стевия",
-            "instructions": "Смешайте основу из муки и масла. Приготовьте крем. Охладите 4 часа.",
-            "partner_link": "https://ru.iherb.com/search?kw=cream+cheese&rcode=KAL0606"
-        },
-        {
-            "name": "🥥 Кокосовые трюфели",
-            "calories": 150,
-            "ingredients": "кокосовая стружка, кокосовое масло, какао, стевия",
-            "instructions": "Смешайте ингредиенты. Сформируйте шарики. Охладите 1 час.",
-            "partner_link": "https://ru.iherb.com/search?kw=coconut+flour&rcode=KAL0606"
-        }
-    ],
-    "Здоровые завтраки": [
-        {
-            "name": "🥑 Авокадо-тост с яйцом",
-            "calories": 320,
-            "ingredients": "хлеб, авокадо, яйца, соль, перец, лимонный сок",
-            "instructions": "Приготовьте тост. Разомните авокадо. Добавьте яйцо-пашот.",
-            "partner_link": "https://ru.iherb.com/search?kw=avocado+oil&rcode=KAL0606"
-        },
-        {
-            "name": "🍓 Греческий йогурт с ягодами",
-            "calories": 180,
-            "ingredients": "греческий йогурт, ягоды, мед, орехи",
-            "instructions": "Смешайте йогурт с ягодами. Добавьте мед и орехи.",
-            "partner_link": "https://ru.iherb.com/search?kw=greek+yogurt&rcode=KAL0606"
-        }
-    ]
-}
-
-# ==================== КЛАВИАТУРЫ ====================
-def main_keyboard():
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(KeyboardButton("🍽️ Найти рецепты"))
-    keyboard.add(KeyboardButton("⭐ Избранное"))
-    keyboard.add(KeyboardButton("🛒 Список покупок"))
-    keyboard.add(KeyboardButton("💰 Партнерские продукты"))
+# Основное меню
+def main_menu_keyboard():
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    
+    keyboard.add(
+        InlineKeyboardButton("🥗 Salads", callback_data="category_salad"),
+        InlineKeyboardButton("🔍 Search Ingredients", callback_data="search_ingredients")
+    )
+    keyboard.add(
+        InlineKeyboardButton("🍗 Chicken Recipes", callback_data="category_chicken"),
+        InlineKeyboardButton("🐟 Fish & Seafood", callback_data="category_fish")
+    )
+    keyboard.add(
+        InlineKeyboardButton("📉 Low Calorie", callback_data="category_lowcal"),
+        InlineKeyboardButton("📊 Nutrition Info", callback_data="nutrition_info")
+    )
+    keyboard.add(
+        InlineKeyboardButton("🥦 Vegetable Dishes", callback_data="category_vegetable"),
+        InlineKeyboardButton("🌱 Vegetarian", callback_data="category_vegetarian")
+    )
+    keyboard.add(
+        InlineKeyboardButton("⭐ My Favorites", callback_data="favorites"),
+        InlineKeyboardButton("📅 Daily Plan", callback_data="daily_plan")
+    )
+    keyboard.add(
+        InlineKeyboardButton("👤 My Profile", callback_data="profile"),
+        InlineKeyboardButton("❓ Help", callback_data="help")
+    )
+    
     return keyboard
 
-def categories_keyboard():
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(KeyboardButton("🍫 Кето десерты"))
-    keyboard.add(KeyboardButton("🥑 Здоровые завтраки")) 
-    keyboard.add(KeyboardButton("🔙 Назад"))
-    return keyboard
-
-# ==================== КОМАНДЫ БОТА ====================
+# Обработчики команд
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, 
-        "🍃 *Добро пожаловать в NutriChefBot!*\n\n"
-        "Я помогу вам найти полезные рецепты и продукты!\n\n"
-        "Выберите действие:",
-        parse_mode='Markdown', 
-        reply_markup=main_keyboard()
-    )
+    welcome_text = "🍽️ *Welcome to FitChefBot!* \n\nYour personal nutrition assistant with healthy recipes and meal plans!"
+    bot.send_message(message.chat.id, welcome_text, 
+                    parse_mode='Markdown', 
+                    reply_markup=main_menu_keyboard())
 
-@bot.message_handler(commands=['help'])
-def send_help(message):
-    bot.reply_to(message,
-        "📋 *Доступные команды:*\n\n"
-        "/start - начать работу\n"
-        "/help - помощь\n"
-        "/recipes - все рецепты\n\n"
-        "Или используйте кнопки меню!",
-        parse_mode='Markdown'
-    )
+@bot.message_handler(commands=['recipes'])
+def send_all_recipes(message):
+    recipes_text = "📚 *All Available Recipes:*\n\n"
+    for recipe in recipes:
+        recipes_text += f"• {recipe['name']['en']} ({recipe['calories']} kcal)\n"
+    
+    bot.send_message(message.chat.id, recipes_text, parse_mode='Markdown')
 
-# ==================== ОБРАБОТКА СООБЩЕНИЙ ====================
-@bot.message_handler(func=lambda message: True)
-def handle_message(message):
-    try:
-        if message.text == "🍽️ Найти рецепты":
-            bot.send_message(message.chat.id, "Выберите категорию:", reply_markup=categories_keyboard())
+# Обработка callback-запросов
+@bot.callback_query_handler(func=lambda call: True)
+def handle_query(call):
+    if call.data.startswith('category_'):
+        category = call.data.replace('category_', '')
+        send_recipes_by_category(call.message, category)
+    
+    elif call.data == 'search_ingredients':
+        bot.send_message(call.message.chat.id, "🔍 Please send me ingredients you have (comma-separated):")
+    
+    elif call.data == 'nutrition_info':
+        bot.send_message(call.message.chat.id, "📊 Connect your Nutritionix account for detailed analysis...")
+    
+    elif call.data == 'favorites':
+        bot.send_message(call.message.chat.id, "⭐ Your favorite recipes will appear here!")
+    
+    elif call.data == 'daily_plan':
+        send_daily_plan(call.message)
+    
+    elif call.data == 'profile':
+        send_user_profile(call.message)
+    
+    elif call.data == 'help':
+        send_help_info(call.message)
+
+# Функции бота
+def send_recipes_by_category(message, category):
+    category_recipes = [r for r in recipes if r['category'] == category]
+    
+    if not category_recipes:
+        bot.send_message(message.chat.id, f"No recipes found in category: {category}")
+        return
+    
+    for recipe in category_recipes[:3]:  # Показываем первые 3 рецепта
+        recipe_text = f"""
+🍽️ *{recipe['name']['en']}*
+⚡ {recipe['calories']} kcal | 🕐 20 min
+
+*Ingredients:*
+{recipe['ingredients']['en']}
+
+*Instructions:*
+{recipe['instructions']['en']}
+
+💡 *Pro Tip:* Use code KAL0606 on iHerb for 10% discount on ingredients!
+        """
         
-        elif message.text == "🍫 Кето десерты":
-            send_recipes(message, "Кето десерты")
-            
-        elif message.text == "🥑 Здоровые завтраки":
-            send_recipes(message, "Здоровые завтраки")
-            
-        elif message.text == "💰 Партнерские продукты":
-            send_partner_info(message)
-            
-        elif message.text == "🔙 Назад":
-            bot.send_message(message.chat.id, "Главное меню:", reply_markup=main_keyboard())
-            
-        else:
-            bot.reply_to(message, "Используйте кнопки меню или команды! 😊")
-            
-    except Exception as e:
-        bot.reply_to(message, "❌ Произошла ошибка. Попробуйте позже.")
+        bot.send_message(message.chat.id, recipe_text, parse_mode='Markdown')
 
-# ==================== ФУНКЦИИ ====================
-def send_recipes(message, category):
-    if category in RECIPES:
-        recipes = RECIPES[category]
-        for recipe in recipes[:3]:
-            response = (
-                f"*{recipe['name']}* ({recipe['calories']} ккал)\n\n"
-                f"🍴 *Ингредиенты:*\n{recipe['ingredients']}\n\n"
-                f"📝 *Приготовление:*\n{recipe['instructions']}\n\n"
-                f"🛒 *Продукты:* [iHerb]({recipe['partner_link']})"
-            )
-            bot.send_message(message.chat.id, response, parse_mode='Markdown')
-    else:
-        bot.send_message(message.chat.id, "Рецепты не найдены 😢")
+def send_daily_plan(message):
+    plan_text = """
+📅 *Your Daily Nutrition Plan:*
 
-def send_partner_info(message):
-    text = (
-        "🛒 *Партнерские продукты:*\n\n"
-        "• iHerb - скидка 10% по коду *KAL0606*\n"
-        "• MyProtein - спортивное питание\n"
-        "• Local Farmers - свежие продукты\n\n"
-        "Поддержите бота, покупая по нашим ссылкам! 💚"
-    )
-    bot.send_message(message.chat.id, text, parse_mode='Markdown')
+🍳 *Breakfast:* Greek Yogurt with Berries (180 kcal)
+🍲 *Lunch:* Grilled Salmon with Vegetables (350 kcal)  
+🥗 *Dinner:* Chicken Caesar Salad (280 kcal)
+🍎 *Snack:* Protein Smoothie (250 kcal)
 
-# ==================== ЗАПУСК БОТА ====================
+✅ *Total: 1060 kcal*
+
+Use code KAL0606 on iHerb for healthy ingredients!
+    """
+    
+    bot.send_message(message.chat.id, plan_text, parse_mode='Markdown')
+
+def send_user_profile(message):
+    profile_text = """
+👤 *Your Profile:*
+
+🏆 Level: Nutrition Beginner
+⭐ Favorite Recipes: 0
+📊 Daily Calories: 1800-2000 kcal
+🥗 Diet Type: Balanced
+
+🔗 Connected Services:
+• Nutritionix: Not connected
+• iHerb: Ready for shopping!
+    """
+    
+    bot.send_message(message.chat.id, profile_text, parse_mode='Markdown')
+
+def send_help_info(message):
+    help_text = """
+❓ *FitChefBot Help:*
+
+*/start* - Main menu
+*/recipes* - Show all recipes
+
+🔍 *Search:* Send ingredients you have
+⭐ *Favorites:* Save recipes you love
+📅 *Daily Plan:* Get personalized meal plan
+
+🛒 *Shopping:* Use code KAL0606 on iHerb for 10% discount!
+
+📞 Support: @GetAlexl
+    """
+    
+    bot.send_message(message.chat.id, help_text, parse_mode='Markdown')
+
+# Запуск бота
 if __name__ == "__main__":
-    print("🤖 Бот запущен! Остановите сочетанием Ctrl+C")
+    print("🤖 FitChefBot is running...")
     bot.polling(none_stop=True)
