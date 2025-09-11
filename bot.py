@@ -4,7 +4,7 @@ import os
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # Настройки бота
-bot = telebot.TeleBot("ВАШ_ТОКЕН_ОТ_BOTFATHER")  # ЗАМЕНИТЕ НА РЕАЛЬНЫЙ ТОКЕН!
+bot = telebot.TeleBot("7052018238:AAEhxM9rw-V7O7DFBExRQ24egAneOPBZO5U")  
 
 # Загрузка рецептов
 with open('recipes.json', 'r', encoding='utf-8') as f:
