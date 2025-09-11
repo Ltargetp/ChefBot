@@ -180,5 +180,28 @@
             "en": "Protein Banana Smoothie",
             "de": "Protein-Bananen-Smoothie",
             "fr": "Smoothie protéiné à la banane"
-            
+        },
+        "category": "drinks",
+        "calories": 250,
+        "protein": 20,
+        "fat": 5,
+        "carbs": 30,
+        "ingredients": {
+            "ru": "Бананы (2шт), протеиновый порошок (30г), миндальное молоко (200мл), овсяные хлопья (40г), мед (15г), корица (5г)",
+            "en": "Bananas (2pcs), protein powder (30g), almond milk (200ml), oatmeal (40g), honey (15g), cinnamon (5g)",
+            "de": "Bananen (2stk), Proteinpulver (30g), Mandelmilch (200ml), Haferflocken (40g), Honig (15g), Zimt (5g)",
+            "fr": "Bananes (2pcs), poudre de protéine (30g), lait d'amande (200ml), flocons d'avoine (40g), miel (15g), cannelle (5g)"
+        },
+        "instructions": {
+            "ru": "Смешайте все ингредиенты в блендере. Взбивайте до однородной массы. Подавайте охлажденным.",
+            "en": "Mix all ingredients in blender. Blend until smooth. Serve chilled.",
+            "de": "Alle Zutaten im Mixer mischen. Glatt mixen. Gekühlt servieren.",
+            "fr": "Mélanger tous les ingrédients au mixeur. Mixer jusqu'à consistance lisse. Servir frais."
+        },
+        "icon": "🥤",
+        "cooking_time": 5,
+        "difficulty": "easy"
+    }
+]
+
             
